@@ -21,6 +21,8 @@ class App extends Component {
     modalSrc: '',
   };
 
+  componentDidUpdate(prevProps, prevState) {}
+
   onSearch = async query => {
     this.setState({
       query: query,
@@ -28,17 +30,16 @@ class App extends Component {
       isLoading: true,
       error: false,
     });
-    const data = await getData(query, 1);
-    if (data.hasOwnProperty('error')) {
-      this.setState({
-        error: true,
-      });
-    } else {
-      console.log(data);
+    try {
+      const data = await getData(query, 1);
       this.setState({
         images: data.hits,
         isLoading: false,
         totalPages: Math.ceil(data.totalHits / 12),
+      });
+    } catch (error) {
+      this.setState({
+        error: true,
       });
     }
   };

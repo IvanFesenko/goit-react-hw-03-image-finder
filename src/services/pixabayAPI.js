@@ -12,7 +12,7 @@ async function getData(query, page) {
     const { data } = response;
     return data;
   } catch (error) {
-    return { isError: true, description: error };
+    throw new Error(error);
   }
 }
 
