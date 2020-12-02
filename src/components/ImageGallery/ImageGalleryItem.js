@@ -1,6 +1,6 @@
 import s from './ImageGallery.module.css';
 
-function ImageGalleryItem({ imageSrc, imageUrl }) {
+function ImageGalleryItem({ imageSrc, imageUrl, handler }) {
   return (
     <li className={s.ImageGalleryItem}>
       <img
@@ -8,6 +8,7 @@ function ImageGalleryItem({ imageSrc, imageUrl }) {
         alt=""
         data-url={imageUrl}
         className={s.ImageGalleryItem_image}
+        onClick={handler}
       />
     </li>
   );

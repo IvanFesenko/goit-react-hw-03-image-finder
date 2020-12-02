@@ -2,7 +2,7 @@ import s from './ImageGallery.module.css';
 
 import ImageGalleryItem from './ImageGalleryItem';
 
-function ImageGallery({ images }) {
+function ImageGallery({ images, onImageClick }) {
   return (
     <ul className={s.ImageGallery}>
       {images.map(image => {
@@ -12,6 +12,7 @@ function ImageGallery({ images }) {
             key={id}
             imageSrc={webformatURL}
             imageUrl={largeImageURL}
+            handler={onImageClick}
           />
         );
       })}

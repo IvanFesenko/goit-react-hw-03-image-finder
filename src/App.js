@@ -8,6 +8,7 @@ import Searchbar from './components/Searchbar/Searchbar';
 import ImageGallery from './components/ImageGallery/ImageGallery';
 import LoadMoreButton from './components/LoadMoreButton/LoadMoreButton';
 import Preloader from './components/Preloader/Preloader';
+import Modal from './components/Modal/Modal';
 
 class App extends Component {
   state = {
@@ -61,10 +62,9 @@ class App extends Component {
   };
 
   onImageClick = event => {
-    event.preventDefault();
     const {
       dataset: { url },
-    } = event;
+    } = event.target;
     this.setState({
       modalSrc: url,
     });
@@ -77,14 +77,21 @@ class App extends Component {
   };
 
   render() {
-    const { images, pageNumber, totalPages, isLoading } = this.state;
+    const { images, pageNumber, totalPages, isLoading, modalSrc } = this.state;
     return (
       <div className={s.App}>
         <Searchbar onSearch={this.onSearch} />
-        {images.length > 0 && <ImageGallery images={images} />}
+        {images.length > 0 && (
+          <ImageGallery images={images} onImageClick={this.onImageClick} />
+        )}
         {isLoading && <Preloader />}
         {pageNumber < totalPages && (
           <LoadMoreButton onClickHandler={this.loadMore} />
+        )}
+        {modalSrc && (
+          <Modal onCloseModal={this.onCloseModal}>
+            <img src={modalSrc} alt="" />
+          </Modal>
         )}
       </div>
     );
