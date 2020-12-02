@@ -3,28 +3,22 @@ import React, { Component } from 'react';
 import s from './Searchbar.module.css';
 
 class SearchBar extends Component {
-  static defaultProps = {
+  state = {
     query: '',
   };
 
-  constructor(props) {
-    super(props);
-    this.state = { ...this.props };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleChange(e) {
+  handleChange = event => {
     this.setState({
-      query: e.target.value,
+      query: event.target.value,
     });
-  }
+  };
 
-  handleSubmit(e) {
-    e.preventDefault();
-    const { onSearch, query } = this.state;
+  handleSubmit = event => {
+    event.preventDefault();
+    const { query } = this.state;
+    const { onSearch } = this.props;
     onSearch(query);
-  }
+  };
 
   render() {
     return (
