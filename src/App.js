@@ -29,7 +29,7 @@ class App extends Component {
     }
     if (
       prevState.pageNumber !== pageNumber &&
-      pageNumber > prevState.pageNumber
+      prevState.pageNumber < pageNumber
     ) {
       await this.fetchData();
       this.scrollToNextPage();
