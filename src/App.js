@@ -18,54 +18,71 @@ class App extends Component {
     error: false,
     images: [],
     totalPages: 0,
+    newPageCords: 0,
     modalSrc: '',
   };
 
-  onSearch = async query => {
+  async componentDidUpdate(prevProps, prevState) {
+    const { query, pageNumber } = this.state;
+    if (prevState.query !== query) {
+      this.fetchData();
+    }
+    if (
+      prevState.pageNumber !== pageNumber &&
+      pageNumber > prevState.pageNumber
+    ) {
+      await this.fetchData();
+      this.scrollToNextPage();
+    }
+  }
+
+  fetchData = async () => {
+    const { query, pageNumber } = this.state;
+    try {
+      const data = await getData(query, pageNumber);
+      this.setState(prevState => ({
+        images: [...prevState.images, ...data.hits],
+        isLoading: false,
+        totalPages:
+          prevState.totalPages > 0
+            ? prevState.totalPages
+            : Math.ceil(data.totalHits / 12),
+      }));
+    } catch (error) {
+      this.setState({
+        error: true,
+        isLoading: false,
+      });
+    }
+  };
+
+  scrollToNextPage = () => {
+    const { newPageCords } = this.state;
+    window.scrollTo({
+      top: newPageCords,
+      behavior: 'smooth',
+    });
+  };
+
+  onSearch = query => {
     this.setState({
       query: query,
       pageNumber: 1,
       isLoading: true,
       error: false,
+      images: [],
+      totalPages: 0,
+      newPageCords: 0,
     });
-    try {
-      const data = await getData(query, 1);
-      this.setState({
-        images: data.hits,
-        isLoading: false,
-        totalPages: Math.ceil(data.totalHits / 12),
-      });
-    } catch (error) {
-      this.setState({
-        error: true,
-        isLoading: false,
-      });
-    }
   };
 
-  loadMore = async () => {
-    const { query, pageNumber } = this.state;
+  loadMore = () => {
     const cords = document.documentElement.scrollHeight - 170;
-    this.setState({
+    this.setState(prevState => ({
       isLoading: true,
-    });
-    try {
-      const data = await getData(query, pageNumber + 1);
-      this.setState(prevState => ({
-        images: prevState.images.concat(data.hits),
-        pageNumber: prevState.pageNumber + 1,
-        isLoading: false,
-      }));
-      window.scrollTo({
-        top: cords,
-        behavior: 'smooth',
-      });
-    } catch (error) {
-      this.setState({
-        error: true,
-        isLoading: false,
-      });
-    }
+      newPageCords: cords,
+      pageNumber: prevState.pageNumber + 1,
+    }));
   };
 
   onImageClick = event => {
