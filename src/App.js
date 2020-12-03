@@ -21,8 +21,6 @@ class App extends Component {
     modalSrc: '',
   };
 
-  componentDidUpdate(prevProps, prevState) {}
-
   onSearch = async query => {
     this.setState({
       query: query,
@@ -40,6 +38,7 @@ class App extends Component {
     } catch (error) {
       this.setState({
         error: true,
+        isLoading: false,
       });
     }
   };
@@ -50,16 +49,23 @@ class App extends Component {
     this.setState({
       isLoading: true,
     });
-    const data = await getData(query, pageNumber + 1);
-    this.setState(prevState => ({
-      images: prevState.images.concat(data.hits),
-      pageNumber: prevState.pageNumber + 1,
-      isLoading: false,
-    }));
-    window.scrollTo({
-      top: cords,
-      behavior: 'smooth',
-    });
+    try {
+      const data = await getData(query, pageNumber + 1);
+      this.setState(prevState => ({
+        images: prevState.images.concat(data.hits),
+        pageNumber: prevState.pageNumber + 1,
+        isLoading: false,
+      }));
+      window.scrollTo({
+        top: cords,
+        behavior: 'smooth',
+      });
+    } catch (error) {
+      this.setState({
+        error: true,
+        isLoading: false,
+      });
+    }
   };
 
   onImageClick = event => {
